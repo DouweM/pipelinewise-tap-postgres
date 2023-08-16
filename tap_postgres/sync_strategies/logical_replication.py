@@ -150,6 +150,11 @@ def create_array_elem(elem, sql_datatype, conn_info):
     if elem is None:
         return None
 
+    if elem == '{}':
+        return []
+    if sql_datatype == 'text[]' and re.fullmatch(r"\{([0-9]+,)*([0-9]+)\}", elem):
+        return re.findall(r"([0-9]+)", elem)
+
     with post_db.open_connection(conn_info, False, True) as conn:
         with conn.cursor() as cur:
             if sql_datatype == 'bit[]':
